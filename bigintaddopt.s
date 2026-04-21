@@ -20,7 +20,10 @@
 // BigInt_larger
         // Stack: save x30, x19, x20, x21 = 4 * 8 = 32 bytes
         .equ    LARGER_STACK_BYTECOUNT, 32
-
+// BigInt_larger
+// Return the larger of lLength1 and lLength2.
+// Parameters: x0 = lLength1 (long), x1 = lLength2 (long)
+// Returns: x0 = the larger of the two values
 BigInt_larger:
         // Prolog
         sub     sp, sp, LARGER_STACK_BYTECOUNT
@@ -74,7 +77,11 @@ LSUMLENGTH .req x25
         .equ    ADD_STACK_BYTECOUNT, 64
 
         .global BigInt_add
-
+// BigInt_add
+// Assign the sum of oAddend1 and oAddend2 to oSum.
+// Parameters: x0 = oAddend1 (BigInt_T), x1 = oAddend2 (BigInt_T),
+//             x2 = oSum (BigInt_T)
+// Returns: w0 = TRUE (1) if successful, FALSE (0) if overflow
 BigInt_add:
         // Prolog: save x30 and all callee-saved registers we use
         sub     sp, sp, ADD_STACK_BYTECOUNT

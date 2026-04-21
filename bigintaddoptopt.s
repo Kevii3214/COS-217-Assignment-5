@@ -31,7 +31,11 @@ LSUMLENGTH .req x24
         .equ    ADD_STACK_BYTECOUNT, 80
 
         .global BigInt_add
-
+// BigInt_add
+// Assign the sum of oAddend1 and oAddend2 to oSum.
+// Parameters: x0 = oAddend1 (BigInt_T), x1 = oAddend2 (BigInt_T),
+//             x2 = oSum (BigInt_T)
+// Returns: w0 = TRUE (1) if successful, FALSE (0) if overflow
 BigInt_add:
         // Prolog: save x30 and all callee-saved registers we use
         sub     sp, sp, ADD_STACK_BYTECOUNT

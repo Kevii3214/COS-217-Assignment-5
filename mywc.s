@@ -41,7 +41,10 @@ iChar:
         .equ    MAIN_STACK_BYTECOUNT, 16
 
         .global main
-
+// main
+// Read from stdin and write to stdout the number of lines,
+// words, and characters. A word is a sequence of non-whitespace
+// characters. Return 0.
 main:
 
         // Prolog

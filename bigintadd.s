@@ -46,6 +46,10 @@
         .equ    LSUMLENGTH, 56
 
 //--------------------------------------------------------------------
+// BigInt_larger
+// Return the larger of lLength1 and lLength2.
+// Parameters: x0 = lLength1 (long), x1 = lLength2 (long)
+// Returns: x0 = the larger of the two values
 BigInt_larger:
         // Prolog
         sub     sp, sp, LARGER_STACK_BYTECOUNT
@@ -80,9 +84,13 @@ larger_endif1:
 
         .size   BigInt_larger, (. - BigInt_larger)
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
         .global BigInt_add // not static
-
+// BigInt_add
+// Assign the sum of oAddend1 and oAddend2 to oSum.
+// Parameters: x0 = oAddend1 (BigInt_T), x1 = oAddend2 (BigInt_T),
+//             x2 = oSum (BigInt_T)
+// Returns: w0 = TRUE (1) if successful, FALSE (0) if overflow
 BigInt_add:
         // Prolog
         sub     sp, sp, ADD_STACK_BYTECOUNT

@@ -29,7 +29,7 @@
 // BigInt_add stack layout      
         // Must be a multiple of 16
         // parameters and local variables must go on stack = 64 bytes
-        .equ    LARGER_STACK_BYTECOUNT, 64 
+        .equ    ADD_STACK_BYTECOUNT, 64 
 
         .equ    OADDEND1, 8
 
@@ -85,7 +85,7 @@ larger_endif1:
 
 BigInt_add:
         // Prolog
-        sub     sp, sp, LARGER_STACK_BYTECOUNT
+        sub     sp, sp, ADD_STACK_BYTECOUNT
         str     x30, [sp]
         str     x0, [sp,OADDEND1] // store oAddend1
         str     x1, [sp, OADDEND2] // store oAddend2
@@ -102,7 +102,7 @@ BigInt_add:
 
         // if (oSum->lLength <= lSumLength) goto skipMemset
         ldr     x0, [sp, OSUM] // x0 = oSum
-        ldr     x0, [x0 LLENGTH] // x0 = oSum->lLength
+        ldr     x0, [x0, LLENGTH] // x0 = oSum->lLength
         ldr     x1, [sp, LSUMLENGTH] // x1 = lSumLength
         cmp     x0, x1
         ble skipMemset
@@ -133,7 +133,7 @@ forLoop:
         // ulSum = ulCarry
         // ulCarry = 0
         ldr     x0, [sp, ULCARRY] // x0 = ulCarry
-        str     x0, [sp, ULSUM] ulSum = x0 = ulCarry
+        str     x0, [sp, ULSUM] // ulSum = x0 = ulCarry
         mov     x0, 0
         str     x0, [sp, ULCARRY] // ulCarry = 0
 
@@ -162,71 +162,71 @@ forLoop:
 
 noCarry1:
         // ulSum += oAddend2->aulDigits[lIndex]
-        ldr     x0, [sp, OADDEND2]     // x0 = oAddend2
-        add     x0, x0, AULDIGITS      // x0 = oAddend2->aulDigits
-        ldr     x1, [sp, LINDEX]       // x1 = lIndex
-        ldr     x2, [x0, x1, lsl 3]    // x2 = oAddend2->aulDigits[lIndex]
-        ldr     x0, [sp, ULSUM]        // x0 = ulSum
-        add     x0, x0, x2             // x0 = ulSum + aulDigits[lIndex]
-        str     x0, [sp, ULSUM]        // ulSum = new sum
+        ldr     x0, [sp, OADDEND2] // x0 = oAddend2
+        add     x0, x0, AULDIGITS // x0 = oAddend2->aulDigits
+        ldr     x1, [sp, LINDEX] // x1 = lIndex
+        ldr     x2, [x0, x1, lsl 3] // x2 = oAddend2->aulDigits[lIndex]
+        ldr     x0, [sp, ULSUM] // x0 = ulSum
+        add     x0, x0, x2 // x0 = ulSum + aulDigits[lIndex]
+        str     x0, [sp, ULSUM] // ulSum = new sum
 
         // if (ulSum >= oAddend2->aulDigits[lIndex]) goto noCarry2
         // ulCarry = 1
-        ldr     x0, [sp, ULSUM]        // x0 = ulSum
-        ldr     x1, [sp, OADDEND2]     // x1 = oAddend2
-        add     x1, x1, AULDIGITS      // x1 = oAddend2->aulDigits
-        ldr     x2, [sp, LINDEX]       // x2 = lIndex
-        ldr     x1, [x1, x2, lsl 3]    // x1 = oAddend2->aulDigits[lIndex]
+        ldr     x0, [sp, ULSUM] // x0 = ulSum
+        ldr     x1, [sp, OADDEND2] // x1 = oAddend2
+        add     x1, x1, AULDIGITS // x1 = oAddend2->aulDigits
+        ldr     x2, [sp, LINDEX] // x2 = lIndex
+        ldr     x1, [x1, x2, lsl 3] // x1 = oAddend2->aulDigits[lIndex]
         cmp     x0, x1
-        bhs     noCarry2                // UNSIGNED: higher or same
+        bhs     noCarry2 // UNSIGNED: higher or same
 
         mov     x0, 1
-        str     x0, [sp, ULCARRY]      // ulCarry = 1
+        str     x0, [sp, ULCARRY] // ulCarry = 1
 
 noCarry2:
         // oSum->aulDigits[lIndex] = ulSum
-         ldr     x0, [sp, OSUM]         // x0 = oSum
-        add     x0, x0, AULDIGITS      // x0 = oSum->aulDigits
-        ldr     x1, [sp, LINDEX]       // x1 = lIndex
-        ldr     x2, [sp, ULSUM]        // x2 = ulSum
+         ldr     x0, [sp, OSUM] // x0 = oSum
+        add     x0, x0, AULDIGITS // x0 = oSum->aulDigits
+        ldr     x1, [sp, LINDEX] // x1 = lIndex
+        ldr     x2, [sp, ULSUM] // x2 = ulSum
         str     x2, [x0, x1, lsl 3] // oSum->aulDigits[lIndex] = ulSum
 
         // lIndex++
         // goto forLoop
-        ldr     x0, [sp, LINDEX]       // x0 = lIndex
-        add     x0, x0, 1              // x0++
-        str     x0, [sp, LINDEX]       // lIndex = x0
+        ldr     x0, [sp, LINDEX] // x0 = lIndex
+        add     x0, x0, 1 // x0++
+        str     x0, [sp, LINDEX] // lIndex = x0
         b       forLoop
 
 endForLoop:
         // if (ulCarry != 1) goto noFinalCarry
-        ldr     x0, [sp, ULCARRY]      // x0 = ulCarry
+        ldr     x0, [sp, ULCARRY] // x0 = ulCarry
         cmp     x0, 1
         bne     noFinalCarry
 
         //if (lSumLength == MAX_DIGITS) goto returnFalse
-        ldr     x0, [sp, LSUMLENGTH]   // x0 = lSumLength
+        ldr     x0, [sp, LSUMLENGTH] // x0 = lSumLength
         mov     x1, MAX_DIGITS
         cmp     x0, x1
         beq     returnFalse
 
         // oSum->aulDigits[lSumLength] = 1
-        ldr     x0, [sp, OSUM]         // x0 = oSum
-        add     x0, x0, AULDIGITS      // x0 = oSum->aulDigits
-        ldr     x1, [sp, LSUMLENGTH]   // x1 = lSumLength
+        ldr     x0, [sp, OSUM] // x0 = oSum
+        add     x0, x0, AULDIGITS // x0 = oSum->aulDigits
+        ldr     x1, [sp, LSUMLENGTH] // x1 = lSumLength
         mov     x2, 1
         str     x2, [x0, x1, lsl 3] // oSum->aulDigits[lSumLength] = 1
 
         // lSumLength++
         ldr     x0, [sp, LSUMLENGTH]
         add     x0, x0, 1
-        str     x0, [sp, LSUMLENGTH]   // lSumLength++
+        str     x0, [sp, LSUMLENGTH] // lSumLength++
 
 noFinalCarry:
         // oSum->lLength = lSumLength
-        ldr     x0, [sp, OSUM]         // x0 = oSum
-        ldr     x1, [sp, LSUMLENGTH]   // x1 = lSumLength
-        str     x1, [x0, LLENGTH]      // oSum->lLength = lSumLength
+        ldr     x0, [sp, OSUM] // x0 = oSum
+        ldr     x1, [sp, LSUMLENGTH] // x1 = lSumLength
+        str     x1, [x0, LLENGTH] // oSum->lLength = lSumLength
 
         // return TRUE
         mov     w0, TRUE // return value = 1

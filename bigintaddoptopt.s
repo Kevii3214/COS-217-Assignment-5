@@ -26,9 +26,9 @@ ULSUM      .req x22 // we can remove ULCARRY
 LINDEX     .req x23
 LSUMLENGTH .req x24
 
-        // Stack: save x30, x19-x25 = 7 * 8 = 56 bytes -> 64 b/c 
+        // Stack: save x30, x19-x27 = 10 * 8 = 80 bytes
         // multiples of 16 only
-        .equ    ADD_STACK_BYTECOUNT, 64
+        .equ    ADD_STACK_BYTECOUNT, 80
 
         .global BigInt_add
 
@@ -42,6 +42,9 @@ BigInt_add:
         str     x22, [sp, 32]
         str     x23, [sp, 40]
         str     x24, [sp, 48]
+        str     x25, [sp, 56]
+        str     x26, [sp, 64]
+        str     x27, [sp, 72]
 
         // Store parameters in callee-saved registers
         mov     OADDEND1, x0 // x19 = oAddend1
@@ -73,6 +76,11 @@ skipUpdate:
         bl      memset
 
 skipMemset:
+        // Pre-compute aulDigits base addresses once, outside the loop
+        // instead of recomputing OADDEND1+AULDIGITS every iteration
+        add     x25, OADDEND1, AULDIGITS // x25 = &oAddend1->aulDigits
+        add     x26, OADDEND2, AULDIGITS // x26 = &oAddend2->aulDigits
+        add     x27, OSUM, AULDIGITS // x27 = &oSum->aulDigits
         // lIndex = 0
         mov     LINDEX, 0
 
@@ -84,23 +92,17 @@ skipMemset:
         adds x0, xzr, xzr
 
 forLoop:
-        // Load oAddend1->aulDigits[lIndex]
-        add     x0, OADDEND1, AULDIGITS
-        ldr     x0, [x0, LINDEX, lsl 3]
+        // Load oAddend1->aulDigits[lIndex] (base pre-computed in x25)
+        ldr     x0, [x25, LINDEX, lsl 3]
 
-        // Load oAddend2->aulDigits[lIndex]
-        add     x1, OADDEND2, AULDIGITS
-        ldr     x1, [x1, LINDEX, lsl 3]
+        // Load oAddend2->aulDigits[lIndex] (base pre-computed in x26)
+        ldr     x1, [x26, LINDEX, lsl 3]
 
-        // ulSum = oAddend1->aulDigits[lIndex]
-        //        + oAddend2->aulDigits[lIndex]
-        //        + carry flag
-        // adcs sets the carry flag automatically
+        // ulSum = addend1 digit + addend2 digit + carry flag
         adcs    ULSUM, x0, x1
 
-        // oSum->aulDigits[lIndex] = ulSum
-        add     x0, OSUM, AULDIGITS
-        str     ULSUM, [x0, LINDEX, lsl 3]
+        // oSum->aulDigits[lIndex] = ulSum (base pre-computed in x27)
+        str     ULSUM, [x27, LINDEX, lsl 3]
 
         // lIndex++
         // Guarded loop: test at bottom
@@ -155,6 +157,9 @@ noFinalCarry:
         mov     w0, TRUE
 
         // Epilog: restore all callee-saved registers
+        ldr     x27, [sp, 72]
+        ldr     x26, [sp, 64]
+        ldr     x25, [sp, 56]
         ldr     x24, [sp, 48]
         ldr     x23, [sp, 40]
         ldr     x22, [sp, 32]

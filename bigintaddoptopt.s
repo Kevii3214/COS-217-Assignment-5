@@ -1,7 +1,7 @@
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 // bigintaddoptopt.s
 // Author: Kevin Tran
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 //--------------------------------------------------------------
 
@@ -108,7 +108,7 @@ forLoop:
         // Guarded loop: test at bottom
         // we must NOT clobber the carry flag here
         // "add" does NOT set flags, "adds" WOULD set flags
-        // So we use "add" for the increment
+        // use "add" for the increment
         add     LINDEX, LINDEX, 1
 
         // now we need to compare lIndex to lSumLength

@@ -1,7 +1,7 @@
-/*--------------------------------------------------------------------*/
-/* bigintadd.c                                                        */
-/* Author: Bob Dondero                                                */
-/*--------------------------------------------------------------------*/
+/*------------------------------------------------------------------*/
+/* bigintadd.c                                                      */
+/* Author: Bob Dondero                                              */
+/*------------------------------------------------------------------*/
 
 #include "bigint.h"
 #include "bigintprivate.h"
@@ -11,7 +11,7 @@
 /* In lieu of a boolean data type. */
 enum {FALSE, TRUE};
 
-/*--------------------------------------------------------------------*/
+/*------------------------------------------------------------------*/
 
 /* Return the larger of lLength1 and lLength2. */
 
@@ -25,7 +25,7 @@ static long BigInt_larger(long lLength1, long lLength2)
    return lLarger;
 }
 
-/*--------------------------------------------------------------------*/
+/*------------------------------------------------------------------*/
 
 /* Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
    distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an

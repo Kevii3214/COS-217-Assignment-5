@@ -8,7 +8,7 @@ Kevin Tran
 ------------------------------------------------------------------------
 Student 2: What is your name?
 
-
+N/A
 
 ------------------------------------------------------------------------
 Student 1: What authorized sources of information did you use to
@@ -17,7 +17,13 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+COS 217 lecture materials.
+COS 217 precept materials.
+COS 217 website.
+COS 217 textbooks.
+The man pages on the armlab cluster.
+COS 217 staff in office hours.
+COS 217 staff and/or current students on Ed.
 
 ------------------------------------------------------------------------
 Student 2: What authorized sources of information did you use to
@@ -26,7 +32,7 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+N/A
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -101,26 +107,123 @@ N/A
 will help your grader to grade it in the most favorable light? In
 particular, what bugs are in your submission?
 
+The instruction for building mywc.s was that "use the DATA section 
+for any global variables that were explicitly initialized to zero"
+but iChar was not explicitly initialized to zero. Since it was 
+not initialized and is implicitly zero, I put it in BSS.
 
+Also, I put an extra statement test file even though the first one 
+covered every statement.
 
+I also used more registers to optimize under 1.26 since just the 
+three optimizations gave me 1.33
 ------------------------------------------------------------------------
 What is your mywc program test plan?
 
 Boundary tests:
-mywcBound1.txt: This file is empty (0 bytes). It tests the boundary condition of the smallest possible input. getchar() returns EOF immediately so the while loop on line 30 is never entered. iInWord is FALSE so the condition on line 52 is false. The program prints all zeros.
-mywcBound2.txt: This file contains a single newline character. It tests the smallest input that produces a non-zero line count. The while loop on line 30 executes one iteration. isspace returns true on line 34, but iInWord is FALSE so line 36 is false and lines 38-39 are not executed. Line 48 is true so line 49 increments lLineCount.
-mywcBound3.txt: This file contains a single character 'a' with no trailing newline. It tests the smallest possible word and the boundary where EOF arrives while in a word. isspace is false on line 34, so the else on line 42 is taken, and since iInWord is FALSE, line 44 is true and line 45 sets iInWord to TRUE. After EOF, line 52 is true so line 53 counts the last word.
-mywcBound4.txt: This file contains a single space character. It tests the boundary of whitespace-only input with no words. isspace is true on line 34, but iInWord is FALSE so line 36 is false and lines 38-39 are not executed. No words are counted.
-mywcBound5.txt: This file contains "hello\n" — one word followed by a newline. It tests a single complete line containing one word. The word ends when the newline (whitespace) is read, causing lines 36, 38-39 to execute. Line 48 is true for the newline so line 49 executes. After EOF, iInWord is FALSE so line 52 is false and line 53 is not executed.
-mywcBound6.txt: This file contains a single tab character (0x09). It tests the boundary condition that isspace correctly identifies tab as whitespace, not just space and newline characters. isspace returns true on line 34, but iInWord is FALSE so lines 38-39 are skipped. Line 48 is false so line 49 is not executed.
-mywcBound7.txt: This file contains "   hi   \n" — a word surrounded by leading and trailing spaces. It tests the boundary of consecutive whitespace before and after a word. Leading spaces hit line 34 true and line 36 false (not in a word). Trailing spaces after the word hit line 36 true, executing lines 38-39 (ending the word). Only the first trailing space triggers lines 38-39; subsequent trailing spaces hit line 36 false.
-mywcBound8.txt: This file contains "hi there\n" — two words separated by a single space on one line. It tests the minimal multi-word input and the transition from one word through whitespace into a second word.
+mywcBound1.txt: This file is empty (0 bytes). It tests the boundary 
+condition of the smallest possible input. getchar() returns EOF 
+immediately so the while loop on line 30 is never entered. iInWord is 
+FALSE so the condition on line 52 is false. The program prints all 
+zeros.
+
+mywcBound2.txt: This file contains a single newline character. 
+It tests the smallest input that produces a non-zero line count. The 
+while loop on line 30 executes one iteration. isspace returns true on 
+line 34, but iInWord is FALSE so line 36 is false and lines 38-39 are 
+not executed. Line 48 is true so line 49 increments lLineCount.
+
+mywcBound3.txt: This file contains a single character 'a' with no 
+trailing newline. It tests the smallest possible word and the boundary
+where EOF arrives while in a word. isspace is false on line 34, so the
+else on line 42 is taken, and since iInWord is FALSE, line 44 is true 
+and line 45 sets iInWord to TRUE. After EOF, line 52 is true so line 
+53 counts the last word. 
+
+mywcBound4.txt: This file contains a single space character. It tests 
+the boundary of whitespace-only input with no words. isspace is true 
+on line 34, but iInWord is FALSE so line 36 is false and lines 38-39 
+are not executed. No words are counted.
+
+mywcBound5.txt: This file contains "hello\n" — one word followed by a 
+newline. It tests a single complete line containing one word. The word
+ends when the newline (whitespace) is read, causing lines 36, 38-39 to
+execute. Line 48 is true for the newline so line 49 executes. After 
+EOF, iInWord is FALSE so line 52 is false and line 53 is not executed.
+
+mywcBound6.txt: This file contains a single tab character (0x09). It 
+tests the boundary condition that isspace correctly identifies tab as 
+whitespace, not just space and newline characters. isspace returns 
+true on line 34, but iInWord is FALSE so lines 38-39 are skipped. 
+Line 48 is false so line 49 is not executed.
+
+mywcBound7.txt: This file contains "   hi   \n" — a word surrounded by
+leading and trailing spaces. It tests the boundary of consecutive 
+whitespace before and after a word. Leading spaces hit line 34 true 
+and line 36 false (not in a word). Trailing spaces after the word hit 
+line 36 true, executing lines 38-39 (ending the word). Only the first 
+trailing space triggers lines 38-39; subsequent trailing spaces hit 
+line 36 false.
+
+mywcBound8.txt: This file contains "hi there\n": two words separated 
+by a space on one line. It tests the minimal multi-word input and the 
+transition from one word through whitespace into a second word.
+
 Statement tests:
-mywcStmt1.txt: This file contains "hi  there\nhello" (two spaces between "hi" and "there", a newline, then "hello" with no trailing newline). This causes the computer to execute: line 30 (loop iterates for each of 15 characters plus EOF exit); line 32 (lCharCount++ for each of 15 characters); line 34 true for ' ', ' ', and '\n' (isspace returns true), and line 34 false for all letters (else branch on line 42 taken); line 36 true when the first space is read after "hi" (iInWord is TRUE), causing lines 38-39 to execute (ending a word); line 36 false when the second space is read (iInWord is already FALSE), so lines 38-39 are skipped; line 44 true when 't' is read after the spaces and when 'h' is read after '\n' (iInWord is FALSE, starting a new word), causing line 45 to execute; line 44 false when 'i','h','e','r','e','e','l','l','o' are read (iInWord is already TRUE); line 48 true when '\n' is read, causing line 49 to execute; line 48 false for all non-newline characters; line 52 true after EOF (iInWord is TRUE because "hello" has no trailing whitespace), causing line 53 to execute; line 55 (printf) and line 56 (return 0) always execute. This single file causes every line of mywc.c to be executed at least once.
-mywcStmt2.txt: This file contains "abc\tdef  ghi\njkl" (a tab between "abc" and "def", two spaces between "def" and "ghi", a newline, then "jkl" with no trailing newline). This provides additional statement coverage with a different input pattern. This causes the computer to execute all the same lines as mywcStmt1.txt: line 30 (loop), line 32 (lCharCount++), line 34 true for tab, spaces, and newline, line 34 false for letters, line 36 true when tab is read after "abc" and when first space is read after "def" and when newline is read after "ghi" (lines 38-39 execute), line 36 false when second space is read (lines 38-39 skipped), lines 44-45 execute when starting each word, line 44 false in the middle of each word, lines 48-49 execute for the newline, line 48 false for non-newlines, line 52 true at EOF (in word "jkl"), line 53 executes, lines 55-56 execute. The use of a tab character confirms that the isspace check on line 34 correctly handles all whitespace types, not just spaces and newlines.
+mywcStmt1.txt: This file contains "hi  there\nhello" (two spaces 
+between "hi" and "there", a newline, then "hello" with no trailing 
+newline). This causes the computer to execute: line 30 (loop iterates 
+for each of 15 characters plus EOF exit); line 32 (lCharCount++ for 
+each of 15 characters); line 34 true for ' ', ' ', and '\n' (isspace 
+returns true), and line 34 false for all letters (else branch on line 
+42 taken); line 36 true when the first space is read after "hi" 
+(iInWord is TRUE), causing lines 38-39 to execute (ending a word); 
+line 36 false when the second space is read (iInWord is already 
+FALSE), so lines 38-39 are skipped; line 44 true when 't' is read 
+after the spaces and when 'h' is read after '\n' (iInWord is FALSE, 
+starting a new word), causing line 45 to execute; line 44 false when 
+'i','h','e','r','e','e','l','l','o' are read (iInWord is already 
+TRUE); line 48 true when '\n' is read, causing line 49 to execute; 
+line 48 false for all non-newline characters; line 52 true after EOF 
+(iInWord is TRUE because "hello" has no trailing whitespace), causing 
+line 53 to execute; line 55 (printf) and line 56 (return 0) always 
+execute. This single file causes every line of mywc.c to be executed 
+at least once.
+
+mywcStmt2.txt: This file contains "abc\tdef  ghi\njkl" (a tab between 
+"abc" and "def", two spaces between "def" and "ghi", a newline, then 
+"jkl" with no trailing newline). This provides additional statement 
+coverage with a different input pattern. This causes the computer to 
+execute all the same lines as mywcStmt1.txt: line 30 (loop), line 32 
+(lCharCount++), line 34 true for tab, spaces, and newline, line 34 
+false for letters, line 36 true when tab is read after "abc" and when 
+first space is read after "def" and when newline is read after "ghi" 
+(lines 38-39 execute), line 36 false when second space is read (lines 
+38-39 skipped), lines 44-45 execute when starting each word, line 44 
+false in the middle of each word, lines 48-49 execute for the newline,
+line 48 false for non-newlines, line 52 true at EOF (in word "jkl"), 
+line 53 executes, lines 55-56 execute. The use of a tab character 
+confirms that the isspace check on line 34 correctly handles all 
+whitespace types, not just spaces and newlines.
+
 Stress tests:
-mywcStress1.txt: This file was generated by a C program (teststress.c) that produces pseudo-random characters using rand() seeded with srand(time(NULL)). The generated characters are restricted to 0x09 (tab), 0x0A (newline), and 0x20 through 0x7E (printable ASCII). The file contains at most 50000 characters and at most 1000 lines. The random input stresses the program with unpredictable sequences of whitespace and non-whitespace characters, creating patterns of word lengths, line lengths, and whitespace runs that human-generated input would be unlikely to produce.
-mywcStress2.txt: This file was generated by the same C program (teststress.c) with a different random seed, producing a different pattern of characters. The same character restrictions apply (0x09, 0x0A, 0x20-0x7E) and the same size limits (at most 50000 characters, at most 1000 lines). Having a second randomly generated file provides additional stress testing confidence with an independent random sequence.
+mywcStress1.txt: This file was generated by a C program (teststress.c) 
+that produces pseudo-random characters using rand() seeded with 
+srand(time(NULL)). The generated characters are restricted to 0x09 
+(tab), 0x0A (newline), and 0x20 through 0x7E (printable ASCII). The 
+file contains at most 50000 characters and at most 1000 lines. The 
+random input stresses the program with unpredictable sequences of 
+whitespace and non-whitespace characters, creating patterns of word 
+lengths, line lengths, and whitespace runs that human-generated input 
+would be unlikely to produce.
+
+mywcStress2.txt: This file was generated by the same C program 
+(teststress.c) with a different random seed, producing a different 
+pattern of characters. The same character restrictions apply (0x09, 
+0x0A, 0x20-0x7E) and the same size limits (at most 50000 characters, 
+at most 1000 lines). Having a second randomly generated file provides 
+additional stress testing confidence with an independent random 
+sequence.
 
 ------------------------------------------------------------------------
 What are the CPU times consumed by the programs from Parts 2a, 2b, 2d,
@@ -132,9 +235,9 @@ Part 2b:  5.196367 seconds
 
 Part 2d:  12.934920 seconds
 
-Part 2e:  _____ seconds
+Part 2e:  5.342411 seconds
 
-Part 2f:  _____ seconds
+Part 2f:  1.212106 seconds
 
 
 

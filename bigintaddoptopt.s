@@ -81,7 +81,7 @@ skipMemset:
         bge     endForLoop
 
         // Clear the carry flag (C = 0) before first iteration
-        adds xzr, xzr, 0
+        adds x0, xzr, 0
 
 forLoop:
         // Load oAddend1->aulDigits[lIndex]

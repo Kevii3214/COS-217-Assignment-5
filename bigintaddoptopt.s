@@ -26,7 +26,8 @@ ULSUM      .req x22 // we can remove ULCARRY
 LINDEX     .req x23
 LSUMLENGTH .req x24
 
-        // Stack: save x30, x19-x25 = 8 * 8 = 64 bytes
+        // Stack: save x30, x19-x25 = 7 * 8 = 56 bytes -> 64 b/c 
+        // multiples of 16 only
         .equ    ADD_STACK_BYTECOUNT, 64
 
         .global BigInt_add
@@ -41,7 +42,6 @@ BigInt_add:
         str     x22, [sp, 32]
         str     x23, [sp, 40]
         str     x24, [sp, 48]
-        str     x25, [sp, 56]
 
         // Store parameters in callee-saved registers
         mov     OADDEND1, x0 // x19 = oAddend1
@@ -155,7 +155,6 @@ noFinalCarry:
         mov     w0, TRUE
 
         // Epilog: restore all callee-saved registers
-        ldr     x25, [sp, 56]
         ldr     x24, [sp, 48]
         ldr     x23, [sp, 40]
         ldr     x22, [sp, 32]
@@ -171,7 +170,6 @@ returnFalse:
         mov     w0, FALSE
 
         // Epilog: restore all callee-saved registers
-        ldr     x25, [sp, 56]
         ldr     x24, [sp, 48]
         ldr     x23, [sp, 40]
         ldr     x22, [sp, 32]
